@@ -84,9 +84,8 @@ Can be affected by angles of interaction with the match, like the orientation of
 
 In moleclular biology and genetics, translation is the process of t
 
-```md
-![Anaoly](assets/Screen Shot 2023-02-02 at 2.55.29 AM.png "Transcription")
-```
+![Analogy to DNA Replication](assets/DNA-replication.png "Matching Codings Transcription and Translation")
+
 
 - While explaining the following regex components and their relation to validating SSN, we will use the following sequence as an example:
     > `901-33-4539`
@@ -118,7 +117,6 @@ Other Anchors:
 | `\B`           | The match must not occur on a `\b` boundary | `\Bend\w*\b` | |  `"ends", "ender" in "end sends endure lender"` | 
 
 > The use of the `^` and `$` anchors in the SSN validation pattern ensures that the pattern mut match the entire string, not just a portion of it. This is important for ensuring that only valid SSN formats are considered matches, and not just strings that contain the correct number of digits in the right order.
-
 >> Anchors can change the behavior of matching a string like start and stop codons specify where target DNA sequences (e.g. genes) can be matched by DNA polymerase.
 
 
@@ -146,6 +144,8 @@ The follow are quantifiers used in the regex pattern for validating a SSN:
 | `\d{2}`      | Specifies that the preceding `\d` character class should match exactly two times | Used to match the second group of two digits in the SSN | `...-33-...` |
 | `\d{4}`      | Specifies that the preceding `\d` character class should match exactly four times | Used to match the third group of four digits in the SSN | `...-4539` |
 
+> The use of these quantifiers in the SSN validation pattern ensures that only strings with the correct number of digits in each group will be considered matches
+>> This helps to prevent invalid SSN formats, such as strings with too few or too many digits, from being considered valid
 
 
 ### Grouping Constructs
