@@ -65,7 +65,7 @@ Although their exact implementation can differ, components are generally charact
 
 
 
-I am not sure if this will equate to the most ideal Big O Notation, I like to think of the process of regex matching like the process of DNA transcription and translation. I do believe human systems have almost perfected internal processes like DNA matchig, but we also unforuntely see mismatching, and it's consequences in cancer and other human mutations. This may be similar to where the regex passes through illegimate SSNs, even within a standard error rate. But I know human systems have multiple layers of validation, destructuring long sequences into digestable, matchable bits. Do regex have this ability to destructure, and potentially break validations into smaller bits to increase accuracy?... I don't know yet! 🙃
+I am not sure if this will equate to the most ideal Big O Notation, I like to think of the process of regex matching like the process of DNA transcription and translation. I do believe human systems have almost perfected internal processes like DNA matchig, but we also unforuntely see mismatching, and it's consequences in cancer and other human mutations. This may be similar to where the regex passes through illegimate SSNs, even within a standard error rate. But I know human systems have multiple layers of validation, destructuring long sequences into digestable, matchable bits. Do regex have this ability to destructure, and potentially break validations into smaller bits in order to increase accuracy?... I don't know yet! 🙃
 
 **match a regex with a target gene sequnce** 
 
@@ -114,7 +114,7 @@ Other Anchors:
 | `\z`           | The match must occur at the end of the string | `-\d{3}\z` | ^\d{3}-\d{2}-\d{4}`\z` |
 | `\G`           | Matches either: 1) the beginning of the string 2) the position that immediately follows the end of the previous match | `\G\(\d\)` | | `"(1)", "(3)", "(5)" in "(1)(3)(5)[7](9)"` |
 | `\b`           | The match must occur on a boundary between a `\w` (alphanumeric) and a `\W` (nonalphanumeric) character | `\b\w+\s\w+\b` | | `"them theme", "them them" in "them theme them them` | 
-| `\B`           | The match must not occur on a `\b` boundary | `\Bend\w*\b` | |  `"ends", "ender" in "end sends endure lender"` | 
+| `\B`           | The match must not occur on a `\b` boundary (inverse of `\b`) | `\Bend\w*\b` | |  `"ends", "ender" in "end sends endure lender"` | 
 
 > The use of the `^` and `$` anchors in the SSN validation pattern ensures that the pattern mut match the entire string, not just a portion of it. This is important for ensuring that only valid SSN formats are considered matches, and not just strings that contain the correct number of digits in the right order.
 >> Anchors can change the behavior of matching a string like start and stop codons specify where target DNA sequences (e.g. genes) can be matched by DNA polymerase.
@@ -136,7 +136,7 @@ The follow are quantifiers used in the regex pattern for validating a SSN:
 | `{n}`        | Matches the previous element exactly `n` times | `\d{3}`, `\d{2}`, and `\d{4}` | `901`, `33`, and `4539` |
 
 
->> breaking this quantifier down for SSN validation
+- breaking this quantifier down for SSN validation
 
 | Quantifier   | Use                  | SSN Validation            | Matches    | 
 |:------------:|:--------------------:|:-------------------------:|:----------:|
@@ -150,15 +150,35 @@ The follow are quantifiers used in the regex pattern for validating a SSN:
 
 ### Grouping Constructs
 
+Grouping constructs in regular expressions are used to group parts of the pattern rogether and apply quantifiers or other operations to the entire group.
+
+**There are no grouping constructs used in the SSN validation pattern, as the pattern only consists of individual charactrers, character classes, quantifiers, and anchors. The pattrern is used to match the entire string, so it is not neccessary to group portions of the pattern together.
+
+In general, the main grouping constructs used in regex are:
+
+| Symbol         | Name               | Use                              | Pattern | Matches | Applicable to SSN regex? | Thoughts? |
+|---------------:|:------------------:|:--------------------------------:|:-------:|:-------:|:------------------------:|:---------:|
+| `()`           | Parenthesis        | Used to group parts of the pattern together. Within the group, you can apply quantifiers,alternation, and other operations to the entire group. | `(\w+\s)+` | Matches one or more word characters followed by a whitespace, repeated one or more times | `(\d{3}-\d{2}-\d{4}\s)+` | Let's say you had several SSN numbers separated by a single whitespace. Instead of the `^` and `$` anchors defining the acceptable start and end matches for one sequence, this may be able to separate and validate several SSN numbers that were placed together. |
+| `(?:)`         | Non-capturing Group | Similar to capturing groups, but they do not capture the text matched by the group. This is useful when applying operations to a group of characters but do not need to access (or consume) the matched text. |
+
+
+
 ### Bracket Expressions
 
 ### Character Classes
+| Symbol         | Use                              | Pattern | Matches |
+|---------------:|:--------------------------------:|:-------:|:-------:|
+| `\d`, `\D`     | Any one digit/non-digit character | Digits are [0-9] | |
+| `\w`, `\W`     | Any one word/non-word charactrer | For ASCII, word characters are [a-zA-Z0-9_] | |
+| `\s`, `\S`     | Any one space/non-space charactrer | for ASCII, whitespace charactrers are [ \n\r\t\f] | |
+
 
 ### The OR Operator
 
 ### Flags
 
 ### Character Escapes
+
 
 ## Author
 
