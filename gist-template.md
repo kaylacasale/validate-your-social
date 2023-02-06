@@ -128,14 +128,25 @@ Other Anchors:
     > Elements that specify how many instances of the previous element must be present in the input string for a match to occur
         >> THINK: occurances or frequency
 
-Quantifiers in regular expressions (regex) specify how many times the preceding character, group, pr character class shoud match. 
+Quantifiers in regular expressions (regex) specify how many times the preceding character, group, or character class shoud match. 
 
 
 The follow are quantifiers used in the regex pattern for validating a SSN:
 
-| Symbol         | Name               | Use                              | Validating SSN                                  |
-|---------------:|:------------------:|:--------------------------------:|:-----------------------------------------------:|
-| 
+| Symbol       | Use                              | Validating SSN                                  | Matches         |
+|-------------:|:--------------------------------:|:-----------------------------------------------:|:---------------:|
+| `{n}`        | Matches the previous element exactly `n` times | `\d{3}`, `\d{2}`, and `\d{4}` | `901`, `33`, and `4539` |
+
+
+>> breaking this quantifier down for SSN validation
+
+| Quantifier   | Use                  | SSN Validation            | Matches    | 
+|:------------:|:--------------------:|:-------------------------:|:----------:|
+| `\d{3}`      | Specifies that the preceding `\d` character class should match exactly three times | Used to match the first group of three digits in the SSN | `901-...` |
+| `\d{2}`      | Specifies that the preceding `\d` character class should match exactly two times | Used to match the second group of two digits in the SSN | `...-33-...` |
+| `\d{4}`      | Specifies that the preceding `\d` character class should match exactly four times | Used to match the third group of four digits in the SSN | `...-4539` |
+
+
 
 ### Grouping Constructs
 
