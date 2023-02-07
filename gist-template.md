@@ -27,15 +27,21 @@ Today, SSNs issues are random numbers, but that wasn't always the case. Before 2
 
 On July 3, 2007, the SSA published its intent to randomixe the nine-digit SSN in the Federal Register Notice, ***Protecting the Integrity of Social Security Numbers*** [Docket No. SSA 2007-0046]. SSN randomization affected the assignment process by:
 
+
 - Eliminating the geographical significance of the first 3 digits of the SSN (area number) by no longer allocating by assignment to individuals in specific states
 - Eliminating the significance of the highest group number and, making the High Group List forzen in time so it can only be used to see the area and group numbers SSA issued prior to randomization implementation
-- Introducing previously unassigned area numbers exlucding 000, 666, and 900-999
+- Introducing previously unassigned area numbers exlucding 000, 666, and 900-999 (disadvantage)
+- 
 
 ## Summary
 
 A Regular Expression (regex) is a sequence of characters that define a search pattern. Regular expressions provide a generalized method to match patterns with diverse sequences.
 
 Here, the task is to check whether a given string is a valid SSN or not by using Regular Expressions. The follow is a basic Regex pattern to verify that a given string is a valid SSN in this format:
+
+> Example SSN match: 
+>> 313-564-1837 
+>> 000-482-9485
 
     `^\d{3}-\d{2}-\d{4}$`
 
@@ -47,6 +53,37 @@ Here, the task is to check whether a given string is a valid SSN or not by using
         >> `-` matches another hyphen
         >> `\d{4}` matches four digits
         >> `$` matches the end of the string
+
+While the regex above ***should*** technically match almost all SSNs, using this regex will still validate a small fraction of SSNs that include 000, 666, and digits between 900-999. According to the Department of Social Security, valid SSNs cannot have these digits in sequence. 
+
+Below, is a regex that validates SSNs similarly to the regex above, but is a bit more accurate by excluding sequences with the first 3 digits equal to 000, 666, or between 900 and 999:
+
+    ^(?!(000|666|9))\d{3}-(?!00)\d{2}-(?!0000)\d{4}$
+
+        > Exaplanation: 
+        >> `^` matches the start of the string
+        >> `(?!...)` matches any 3-digits that are not followed by a specific string within `(?!...)`
+        >> `(000|666|9)` excludes undesired values in the first group of 3 digits
+        >> `\d{3}` matches three digits
+        >> `-` matches a hyphen
+        >> `(?!...)` matches any 2-digits that are not followed by a specific string within `(?!...)`
+        >> `(..00)` excludes undesired values in the second group of 2 digits
+        >> `\d{2}` matches two digits
+        >> `-` matches another hyphen
+        >> `(?!...)` matches any 3-digits that are not followed by a specific string within `(?!...)`
+        >> `(..0000)` excludes undesired values in the last group of 4 digits
+        >> `$` matches the end of the string
+
+
+Overall, a valid SSN must satisfy the following conditions: 
+1. It should have 9 digits
+2. It should be divided into 3 parts by hyphen (-)
+3. The first part (or group) should have 3 digits and should not be 000, 666, or beteen 900 and 999
+4. The second part should have 2 digits and it should be from 01 to 99
+5. The third part should have 4 digits and it should be from 0001 to 9999
+
+
+> Just like writing any code, there are several ways to accomplish a successfull validation for Social Security Numbers. And... what if the SSNs are not all in the same format OR you want to change their format without doing so manually?! Let's discuss below!
 
 
 ## Table of Contents
@@ -85,6 +122,7 @@ Can be affected by angles of interaction with the match, like the orientation of
 In moleclular biology and genetics, translation is the process of t
 
 ![Analogy to DNA Replication](assets/DNA-replication.png "Matching Codings Transcription and Translation")
+![Codon Table Analogy to Anchors](assets/codon-sequences.png "Positional Matching")
 
 
 - While explaining the following regex components and their relation to validating SSN, we will use the following sequence as an example:
@@ -152,14 +190,29 @@ The follow are quantifiers used in the regex pattern for validating a SSN:
 
 Grouping constructs in regular expressions are used to group parts of the pattern rogether and apply quantifiers or other operations to the entire group.
 
-**There are no grouping constructs used in the SSN validation pattern, as the pattern only consists of individual charactrers, character classes, quantifiers, and anchors. The pattrern is used to match the entire string, so it is not neccessary to group portions of the pattern together.
+    > `^\d{3}-\d{2}-\d{4}$`
+
+**There are no grouping constructs used in the standard SSN validation pattern shown above, as the pattern only consists of individual charactrers, character classes, quantifiers, and anchors. This is because the pattern is used to match the entire string, so it is not neccessary to group portions of the pattern together.**
+
+- BUT how can we apply Grouping Constructs to SSN regex validation? 
+    - Let's think of a real-life example!
+
+    > Example: I have hundreds of SSNs and want to find and replace all
+
+Regular expression search:
+- Assigns full match to `Group 0`
+- () means that that part of the full match should be captured separatetly as a different group
+    - Groups numbered left to right, Group 0 being the full match, Group 1 being the captured group farthest to the left, Group 2 being the captured group located to the right of Group 1, etc.
+
 
 In general, the main grouping constructs used in regex are:
 
-| Symbol         | Name               | Use                              | Pattern | Matches | Applicable to SSN regex? | Thoughts? |
+
+
+| Symbol         | Name               | Use                              | Pattern | Matches | Potential regex using Grouping Constructs |  |
 |---------------:|:------------------:|:--------------------------------:|:-------:|:-------:|:------------------------:|:---------:|
-| `()`           | Parenthesis        | Used to group parts of the pattern together. Within the group, you can apply quantifiers,alternation, and other operations to the entire group. | `(\w+\s)+` | Matches one or more word characters followed by a whitespace, repeated one or more times | `(\d{3}-\d{2}-\d{4}\s)+` | Let's say you had several SSN numbers separated by a single whitespace. Instead of the `^` and `$` anchors defining the acceptable start and end matches for one sequence, this may be able to separate and validate several SSN numbers that were placed together. |
-| `(?:)`         | Non-capturing Group | Similar to capturing groups, but they do not capture the text matched by the group. This is useful when applying operations to a group of characters but do not need to access (or consume) the matched text. |
+| `()`           | Capturing Group    | Used to group parts of the pattern together and capture the matched text. The captured sequence can be accessed through group references, such as `/1`, `/2`, et., Within the group, you can apply quantifiers,alternation, and other operations to the entire group. | `(\w+\s)+` | Matches one or more word characters followed by a whitespace, repeated one or more times | `(\d{3}-\d{2}-\d{4}\s)+` | Let's say you had several SSN numbers separated single whitespaces. Instead of the `^` and `$` anchors defining the acceptable start and end matches for one sequence, this may be able to separate and validate several SSN numbers placed together. |
+| `(?:)`         | Non-capturing Group | Similar to capturing groups, but do not capture the text matched by the group. This is useful when applying operations to a group of characters but do not need to access (or consume) the matched text. |
 
 
 
