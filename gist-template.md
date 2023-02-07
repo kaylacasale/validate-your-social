@@ -186,7 +186,7 @@ The follow are quantifiers used in the regex pattern for validating a SSN:
 >> This helps to prevent invalid SSN formats, such as strings with too few or too many digits, from being considered valid
 
 
-
+**Modifying Regex With Quantifiers:**
 
 - [x] With Quantifiers, we can also rewrite the bold portion of our more lengthy regular expression below: 
 
@@ -239,12 +239,21 @@ In general, the main grouping constructs used in this regex for validating SSNs 
 
 
 
-| Symbol         | Name               | Use                              | Pattern | Matches | Example Grouping Constructs for Validating SSN |  |
+| Symbol         | Name               | Use                              |(A) Random Pattern | (A) Matches | Example Grouping Constructs for Validating SSN |  |
 |---------------:|:------------------:|:--------------------------------:|:-------:|:-------:|:------------------------:|:---------:|
-| `()`           | Capturing Group    | Used to group parts of the pattern together and capture the matched text. The captured sequence can be accessed through group references with a numbered backreference, such as `/1`, `/2`, et., Within the group, you can apply quantifiers,alternation, and other operations to the entire group. | `(\w+\s)+` | Matches one or more word characters followed by a whitespace, repeated one or more times | (1) `(?!666⏐000⏐9\d{2})`, (2) `(?!00)`, (3) `(?!0{4})` | 3 groups captured by the SSN regex shown above; returns true if the string matches and does not contain excluded values | 
+| `()`           | Capturing Group    | Used to group parts of the pattern together and capture the matched text. The captured sequence can be accessed through group references with a numbered backreference, such as `/1`, `/2`..., or `$1`, `$2`,.., etc. Within the group, you can apply quantifiers and other operations to the entire group. | `(\w+\s)+` | Matches one or more word characters followed by a whitespace, repeated one or more times | `(?!666⏐000⏐9\d{2})`, `(?!00)`, `(?!0{4})` | 3 groups captured by the SSN regex shown above; returns true if the string matches and does not contain excluded values | 
 | `(?!)`         | Negative Lookahead | Will only match if the capturing group does not match | (i) `match(?!element)` or (ii) `z(?!a)` |(i) Element cannot follow match in order to be a successful match (exludes values ahead in the regex); (ii) Matches the first "z" but not the "z" before the "a" | `(?!0{4})` | Regex will not match the SSN ending in a group of 4 zeros as the last 4 digits | 
 
+Capturing Groups:
 
+| Symbol | References | Use |
+|:------:|:----------:|:---:|
+| `$1`   | the first captured group (leftmost) | mostly used for replacements |
+| `\1`   | backreferences to the first (leftmost) capturing group within the regular expression itself | mostly used for reference |
+
+
+
+**Modifying Regex With Grouping Constructs:**
 
 - [x] Along with Quantifiers, we can use Grouping Constructs to rewrite the bold portion of our more lengthy regular expression below:
 
@@ -295,7 +304,7 @@ In general, the main grouping constructs used in this regex for validating SSNs 
 
 ### Bracket Expressions
 
-    > A list of characters enclosed by `[]` (It matches any single character in that list)
+    > It matches any single character in that list enclosed by `[]`
         > If the first charater of the list is the caret `^`, then it matches any character NOT in the list
             > THINK: choices or options
 
@@ -303,26 +312,67 @@ Within a bracket expression, a range expresison consists of two characters separ
 
 | Syntax                    | Represents                        | Alternative or Equivalent                 |
 |:-------------------------:|:---------------------------------:|:-----------------------------------------:|
-|⭐️  `[:punct:]`               | Punctuation characters            | `! # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ʼ { | } ~` |
+|⭐️  `[:punct:]`            | Punctuation characters            | `! # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ʼ { | } ~` |
 | `[:alnum:]`               | Alphanumeric characters           | `[0-9A-Za-z]`                             |
 | `[:alpha:]`               | Alphabet characters               | `[A-Za-z]`                                |
 | `[:blank:]`               | Blank characters                  | `space` and `tab`                         |
 | `[:digit:]`               | Digits                            | `0 1 2 3 4 5 6 7 8 9`                     |
 
+
+- While there are no bracket expressions in the two regular expressions for validating SSNs below, there are several ways we can incorporate bracket expressions.
+
+1. `^\d{3}-\d{2}-\d{4}$`
+2. `^(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$`
+
+    - 🌎 Let's look at a real-life example: 
+             `I have hundreds of Social Security Numbers, some separated by a hyphen and some separated by just a space. How can I match all of these SSNs with ONE regex?`
+
+| Bracket Expression          | Represents                            | Example |
+|:---------------------------:|:-------------------------------------:|:-------:|
+| `[-]`                       | Specifies a character (hyphen) that could match a hyphen between digits in the SSN | `XXX-XX-XXXX` |
+| `[\s]`                      | Specifies a space that could match the spaces between digits in the SSN | `XXX XX XXXX` |
+| `[-\s]`                     | Specifies a hyphen or space that could match between groups of digits in the SSN | `XXX-XX-XXXX` or `XXX XX XXXX` |
+
+SSN Regex Re-written with Bracket Expressions (to allow hyphens or spaces between digits):
+
+1. ^\d{3}**[-\s]**-\d{2}**[-\s]**-\d{4}$
+2. ^(?!666|000|9\d{2})\d{3}**[-\s]**-(?!00)\d{2}**[-\s]**-(?!0{4})\d{4}$
+
+
 ### Character Classes
-| Symbol         | Use                              | Pattern | Matches |
-|---------------:|:--------------------------------:|:-------:|:-------:|
-| `\d`, `\D`     | Any one digit/non-digit character | Digits are [0-9] | |
-| `\w`, `\W`     | Any one word/non-word charactrer | For ASCII, word characters are [a-zA-Z0-9_] | |
-| `\s`, `\S`     | Any one space/non-space charactrer | for ASCII, whitespace charactrers are [ \n\r\t\f] | |
-| `\\`           | To denote an escaped string literal | 
 
-- Is there an expression that more accurately validates SSN?
+Like discussed in the Bracket Expressions section, a `character class` or `character set` matches only one out of several characters (e.g. `[-]` matches XXX-XX-XXXX but not `XXX.XX.XXXX` or `XXX/XX/XXXX`). You can use a hyphen inside a character class to specify a range of characters (e.g. `[0-9]` instead excluding values like 00 in `[?!00]` with bracket expressions and OR operators discussed below). You can combine range and single characters (e.g. `[-\s]`) to match a hyphen or a whitespace.
 
+| Classes, Inverse Classes  | Use                              | Pattern | Matches |
+|--------------------------:|:--------------------------------:|:-------:|:-------:|
+| `\d`, `\D`                | Any one digit/non-digit character | Digits are [0-9] | |
+| `\w`, `\W`                | Any one word/non-word charactrer | Word characters are [a-zA-Z0-9_] | |
+| `\s`, `\S`                | Any one space/non-space charactrer | Whitespace charactrers are [ \n\r\t\f] | |
+
+
+- 🌎 Let's look at another real-life example of SSN validation with regular expressions:
+    `I have several Social Security Numers, but I only want to keep the last 4 digits visible and redact the rest.`
+
+        > Let's look at our regular expression and our example SSN
+            REGEX: ^(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$
+            SSN: 901-33-4539
+
+
+| Portion of Regex | Group     | Grouping Symbol   | Digits Captured or Redacted | Refers to |
+|:----------------:|:---------:|:-----------------:|:---------------------------:|:---------:|
+| `(?!666⏐000⏐9\d{2})\d{3}`| Group 1 | `$1` | Redacted to `XXX` | first 3 digits masked by `x`|
+| `(?!00)\d{2}` | Group 2 | `$2` | Redacted to `XX` | middle 2 digits masked by `x` |
+| `(?!0{4})\d{4}` | Group 3 | `$3` | Captured with `$3` | last 4 digits captured by `$3` |
+| `^(?!666⏐000⏐9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$` | Group 0 | `$0` | combined: `XXX-XX-$3` | all 9 digits |
+
+
+<!-- | `\\`           | To denote an escaped string literal |  -->
+
+<!-- - Is there an expression that more accurately validates SSN?
 
         ^(?!666|000|9\\d{2})\\d{3}-(?!00)\\d{2}-(?!0{4})\\d{4}$
 
-    > By using the double backslash, 
+    > By using the double backslash,  -->
 
 
 ### The OR Operator
