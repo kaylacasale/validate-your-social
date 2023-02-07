@@ -414,7 +414,13 @@ Using th OR operator, we exclude certain values including:
 
             > By excluding certain values through negative lookaheads in the regular expression, the probability of a match will decrease. The restricted values are effectively removed from the pool of possible matches, reducing the overall chance of a successful match
 
-> Theroy: **Using the OR Operator, Negative lookaheads essentially decrease the randomness of generating a valid SSN, in effect, reducing the overall chance of a successful match with regex**
+> Theory: **Using the OR Operator, Negative lookaheads essentially decrease the randomness of generating a valid SSN, in effect, reducing the overall chance of a successful match with regex**
+    > So, if this theory is correct:
+        > The rule implemented by the Department of Social Security to exclude:
+            - values 666, 000, and ones between 900-999 from the first 3 digits (Group 1)
+            - value 00 from the middle 2 digits (Group 2)
+            - value 0000 from the final 4 digits (Group 3)
+        > Decreases the randomness of SSN assignment at birth and may increase the likelihood of hacking 
 
 
 ### Flags
