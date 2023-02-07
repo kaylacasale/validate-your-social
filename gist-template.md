@@ -77,7 +77,7 @@ Below, is a regex that validates SSNs similarly to the regex above, but is a bit
 
 Overall, a valid SSN must satisfy the following conditions: 
 1. It should have 9 digits
-2. It should be divided into 3 parts by hyphen (-)
+2. It should be divided into 3 parts by hyphen `[-]`
 3. The first part (or group) should have 3 digits and should not be 000, 666, or beteen 900 and 999
 4. The second part should have 2 digits and it should be from 01 to 99
 5. The third part should have 4 digits and it should be from 0001 to 9999
@@ -376,6 +376,27 @@ Like discussed in the Bracket Expressions section, a `character class` or `chara
 
 
 ### The OR Operator
+
+    > "OR" in regular expressions 
+        > THINK: grouping and alternation
+
+Grouping and alternation are core features of most modern regular expressions. You can use the `|` operator (logical OR) to match characters to either the left or right of the | operator.
+
+- This reminds me of using the toUpperCase() and toLowerCase() functions in Javascript, but I would think the decision to use either or relies on the scope. With the Regex OR Operator, you can dynamically accept various sequences, and differentiate 
+
+If we look back to the guidelines that SSN's have to fit, I did not follow the exact wording directed, I did the opposite!
+
+    >  ^(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$
+...
+4. The second part should have 2 digits and it should be from 01 to 99
+5. The third part should have 4 digits and it should be from 0001 to 9999
+
+
+Using th OR operator, we exclude certain values including:
+
+| Values Excluded | Group   | Probablility of Generating that Value |   |
+|:---------------:|:-------:|:-------------------------------------:|:-:|
+| `666`, `000`, `9xx` | $1 | 1 - (1/10 * 1/10) | x = [0-9] |
 
 ### Flags
 
