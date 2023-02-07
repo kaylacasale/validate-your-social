@@ -60,7 +60,7 @@ Below, is a regex that validates SSNs similarly to the regex above, but is a bit
 
     ^(?!(000|666|9))\d{3}-(?!00)\d{2}-(?!0000)\d{4}$
 
-        > Exaplanation: 
+        > Explanation: 
         >> `^` matches the start of the string
         >> `(?!...)` matches any 3-digits that are not followed by a specific string within `(?!...)`
         >> `(000|666|9)` excludes undesired values in the first group of 3 digits
@@ -83,7 +83,7 @@ Overall, a valid SSN must satisfy the following conditions:
 5. The third part should have 4 digits and it should be from 0001 to 9999
 
 
-> Just like writing any code, there are several ways to accomplish a successfull validation for Social Security Numbers. And... what if the SSNs are not all in the same format OR you want to change their format without doing so manually?! Let's discuss below!
+> Just like writing any code, there are several ways to accomplish a successfull validation for Social Security Numbers. What if the SSNs are not all in the same format OR you want to change their format without doing so manually?! Let's discuss below!
 
 
 ## Table of Contents
@@ -186,18 +186,39 @@ The follow are quantifiers used in the regex pattern for validating a SSN:
 >> This helps to prevent invalid SSN formats, such as strings with too few or too many digits, from being considered valid
 
 
+
+
+- With Quantifiers, we can also rewrite the bold portion of our more lengthy regular expression below: 
+
+    ☞ ^(?!(000|666|9))\d{3}-(?!00)\d{2}-**(?!0000)**\d{4}$ 
+
+    👉 ^(?!(000|666|9))\d{3}-(?!00)\d{2}-**(?!0{4})**\d{4}$ 
+
+
+| Changed                   | Replaced With                 | 
+|:-------------------------:|:-----------------------------:|
+| `(?!0000)`                | `(?!0{4})`                    |
+
+
+
+⦿ ^**(?!666|000|9\d{2})\d{3}**-(?!00)\d{2}-**(?!0{4})**\d{4}$ ⦿
+
+
+
+
 ### Grouping Constructs
 
 Grouping constructs in regular expressions are used to group parts of the pattern rogether and apply quantifiers or other operations to the entire group.
 
-    > `^\d{3}-\d{2}-\d{4}$`
+     `^\d{3}-\d{2}-\d{4}$`
 
 **There are no grouping constructs used in the standard SSN validation pattern shown above, as the pattern only consists of individual charactrers, character classes, quantifiers, and anchors. This is because the pattern is used to match the entire string, so it is not neccessary to group portions of the pattern together.**
 
+Let's say you want to match the term `SSN:` that usually precedes the 9-digit number, but you do not want to capture these characters. | 
 - BUT how can we apply Grouping Constructs to SSN regex validation? 
     - Let's think of a real-life example!
 
-    > Example: I have hundreds of SSNs and want to find and replace all
+    > Example: I have hundreds of SSNs and want to find and replace all digits with an 'X' except the last 4
 
 Regular expression search:
 - Assigns full match to `Group 0`
@@ -211,10 +232,60 @@ In general, the main grouping constructs used in regex are:
 
 | Symbol         | Name               | Use                              | Pattern | Matches | Potential regex using Grouping Constructs |  |
 |---------------:|:------------------:|:--------------------------------:|:-------:|:-------:|:------------------------:|:---------:|
-| `()`           | Capturing Group    | Used to group parts of the pattern together and capture the matched text. The captured sequence can be accessed through group references, such as `/1`, `/2`, et., Within the group, you can apply quantifiers,alternation, and other operations to the entire group. | `(\w+\s)+` | Matches one or more word characters followed by a whitespace, repeated one or more times | `(\d{3}-\d{2}-\d{4}\s)+` | Let's say you had several SSN numbers separated single whitespaces. Instead of the `^` and `$` anchors defining the acceptable start and end matches for one sequence, this may be able to separate and validate several SSN numbers placed together. |
-| `(?:)`         | Non-capturing Group | Similar to capturing groups, but do not capture the text matched by the group. This is useful when applying operations to a group of characters but do not need to access (or consume) the matched text. |
+| `()`           | Capturing Group    | Used to group parts of the pattern together and capture the matched text. The captured sequence can be accessed through group references with a numbered backreference, such as `/1`, `/2`, et., Within the group, you can apply quantifiers,alternation, and other operations to the entire group. | `(\w+\s)+` | Matches one or more word characters followed by a whitespace, repeated one or more times | `(\d{3}-\d{2}-\d{4}\s)+` | Let's say you had several SSN numbers separated single whitespaces. Instead of the `^` and `$` anchors defining the acceptable start and end matches for one sequence, this may be able to separate and validate several SSN numbers placed together. |
+| `(?:)`         | Non-capturing Group | Similar to capturing groups, but do not capture the text matched by the group. This is useful when applying operations to a group of characters but do not need to capture the matched text. | `(?:abc){3}` | `abcabcabc` (no groups) | | |
+| `(?!)`         | Negative Lookahead | Will only match if the capturing group does not match | `match(?!element)` or `z(?!a)` | Element cannot follow match in order to be a successful match (exludes values ahead in the regex); Matches the first "z" but not the "z" before the "a" | `(?!0{4})` | Regex will not match the SSN ending in a group of 4 zeros as the last 4 digits | 
+| `\\`           | Back
 
 
+- Along with Quantifiers, we can use Grouping Constructs to rewrite the bold portion of our more lengthy regular expression below:
+
+    ☞ ^(?!(000|666|**9)**)\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$ 
+
+    👉 ^(?!666|000|**9\d{2}**)\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$
+
+
+
+
+| Changed                   | Replaced With                 |
+|:-------------------------:|:-----------------------------:|
+| `9)`                      | `9\d{2})`                     |
+
+- Parentheses Contents in the Match
+    - Each sub-pattern inside a pair of parenthesis will be captured as a group
+    - Capturing groups are numbered by counting their opening parenthesis from left to right
+        > For example, take the regex:
+
+             ^(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$
+
+        - Group 0 (at index 0): the full match (full regular expression)
+
+            > `^(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$`
+
+        - Group 1 (at index 1): the contents of the first parenthesis
+
+            > `(?!666|000|9\d{2})`
+
+        - Group 2 (at index 2): the contents of the second parenthesis
+
+            > `(?!00)`
+
+        - Group 3 (at index 3): the contents of the third parenthesis
+
+            > `(?!0{4})`
+
+
+| Regex Portion                 | Represents                        | Why?                                      |
+|:-----------------------------:|:---------------------------------:|:-----------------------------------------:|
+| `(?!666⏐000⏐9\d{2})`          | Group 1 | The first 3 digits should **not** start with 000, 666, or between 900 and 999;  `(?!...)` looks ahead to exclude sequences that have 000, 666, or 900, 901, 902, 903, ....999 (any 3 digits that start with 9 where `⏐9\d{2}` tells us to also exclude values starting in 9 and proceeding with any 2 digits \d{2}) |
+| 👀 `(?!...`                   | Negative Lookahead in Groups 1, 2, and 3 (and 0, of course)   | So there are no SSN matches with excluded values ahead |
+| | | |
+| (?!🙅‍♀️ `666⏐000⏐...`              | Group 1 | 3 digits to look ahead for and fail a SSN in Group 1 with values `000` or `666` |
+| (?!🙅‍♀️ `...⏐9\d{2})`              | Group 1 | 1 digit (`9`) to look ahead for in combination with any two following digits to fail a SSN in Group 1 with values between `900` and `999` | 
+| | | |
+| `(?!00)`                      | Group 2 | 2 digits to look ahead for that should be anywhere from 01-99; so any SSN with a 2-digit sequence in Group 2 that is `00` is not valid | 
+| | | |
+| `(?!0{4})`                 | Group 3 | 4 digits to look ahead for that should be any value from 0001-9999; so any SSN with a 4-digit sequence in Group 3 that is `0000` is not valid |
 
 ### Bracket Expressions
 
@@ -224,6 +295,14 @@ In general, the main grouping constructs used in regex are:
 | `\d`, `\D`     | Any one digit/non-digit character | Digits are [0-9] | |
 | `\w`, `\W`     | Any one word/non-word charactrer | For ASCII, word characters are [a-zA-Z0-9_] | |
 | `\s`, `\S`     | Any one space/non-space charactrer | for ASCII, whitespace charactrers are [ \n\r\t\f] | |
+| `\\`           | To denote an escaped string literal | 
+
+- Is there an expression that more accurately validates SSN?
+
+
+        ^(?!666|000|9\\d{2})\\d{3}-(?!00)\\d{2}-(?!0{4})\\d{4}$
+
+    > By using the double backslash, 
 
 
 ### The OR Operator
