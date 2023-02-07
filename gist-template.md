@@ -40,8 +40,10 @@ A Regular Expression (regex) is a sequence of characters that define a search pa
 Here, the task is to check whether a given string is a valid SSN or not by using Regular Expressions. The follow is a basic Regex pattern to verify that a given string is a valid SSN in this format:
 
 > Example SSN match: 
->> 313-564-1837 
->> 000-482-9485
+
+>> [x] 313-564-1837 
+
+>> [ ] 000-482-9485
 
     `^\d{3}-\d{2}-\d{4}$`
 
@@ -94,13 +96,15 @@ Overall, a valid SSN must satisfy the following conditions:
 - [Bracket Expressions](#bracket-expressions)
 - [Character Classes](#character-classes)
 - [The OR Operator](#the-or-operator)
-- [Flags](#flags)
-- [Character Escapes](#character-escapes)
+- [Future Goals](#future-goals)
+<!-- - [Flags](#flags)
+- [Character Escapes](#character-escapes) -->
+
 
 ## Regex Components
 Although their exact implementation can differ, components are generally characters that have a relatively universal use. Regular expression syntax is usually described in a grammatical form, but here we will describe it more loosly from bottom up, the way you would create one! At the bottom, are these basic components, also called atoms.
 
-
+<!-- 
 
 I am not sure if this will equate to the most ideal Big O Notation, I like to think of the process of regex matching like the process of DNA transcription and translation. I do believe human systems have almost perfected internal processes like DNA matchig, but we also unforuntely see mismatching, and it's consequences in cancer and other human mutations. This may be similar to where the regex passes through illegimate SSNs, even within a standard error rate. But I know human systems have multiple layers of validation, destructuring long sequences into digestable, matchable bits. Do regex have this ability to destructure, and potentially break validations into smaller bits in order to increase accuracy?... I don't know yet! 🙃
 
@@ -111,18 +115,25 @@ I am not sure if this will equate to the most ideal Big O Notation, I like to th
     -- like regex may run through several sequences and only matches one string
 
 - Can be called from the 5' to 3' direction on either side of the double helix, and within different groups 
->> Does direction and segmented direction like during DNA replication with exponential growth in DNA strands upon splicing, increase the capacity for randomness of the random expression? 
+    -- Grouping constructs in regex can break down SSN sequences, and both full sequences and groups can be called from various starting and ending points with anchors
 
-- Initiated by start and stop sequences that are not variable amongst sequences
+<!-- >> Does direction and segmented direction like during DNA replication with exponential growth in DNA strands upon splicing, increase the capacity for randomness of the random expression?  -->
 
-    -- like anchors, a non-unique regex copmonent
+<!-- - Initiated by start and stop sequences (codons) that are not variable amongst sequences (e.g. start: AUG, stop: UAA, UAG, UGA, etc.)
 
-Can be affected by angles of interaction with the match, like the orientation of molecules or atoms (sub)
+    -- like Anchors (e.g. `^`, `$`, etc.), a non-unique regex copmonent, whos sequences are not consumed or captured, but used to direct the regex positionally
 
-In moleclular biology and genetics, translation is the process of t
+
+- Wobble Position of a codon: refers to the pairing between two nucleotides in RNA molecules that does not folloe Watson-Crick base pair rules. This phenomenon permits a single tRNA to recognize more than one codon. Therefore, although there are 61 codons for amino acids, the number of tRNA (or enzymes to recognize each distinct codon sequence) is far less (around 40), due to wobbling.
+
+    -- OR Operators and Bracket Expressions allow us to use Character Classes to include a range of values for matching and/or exclude values. This is why the same regex can match multiple sequences, since there are several SSN possibilities that can fit one regex sequence.
+
+Can be affected by angles of interaction with the match, like the orientation of molecules or atoms (sub) -->
+
+<!-- In moleclular biology and genetics, translation is the process of t
 
 ![Analogy to DNA Replication](assets/DNA-replication.png "Matching Codings Transcription and Translation")
-![Codon Table Analogy to Anchors](assets/codon-sequences.png "Positional Matching")
+![Codon Table Analogy to Anchors](assets/codon-sequences.png "Positional Matching") --> 
 
 
 - While explaining the following regex components and their relation to validating SSN, we will use the following sequence as an example:
@@ -402,7 +413,7 @@ Using th OR operator, we exclude certain values including:
 | `00` | $2 | (1/10 * 1/10) = 1/100 = **.01** | `[0-9]` | 1 - 0.01 = **0.99** | **99%** chance of getting SSN without excluded value |
 | `0000` | $3 | ((1/10)^4) = 9999/10000 = *0.0001* | `[0-9]` | 1 - 0.0001 = 0.9999 | **99.99%** chance of getting SSN without excluded value |
 
-> cumulative chance of fwtting SSN without excluded values: 
+> cumulative chance of getting SSN without excluded values: 
 
     > 0.898 + 0.99 + 0.9999 = 2.8878
 
@@ -415,12 +426,20 @@ Using th OR operator, we exclude certain values including:
             > By excluding certain values through negative lookaheads in the regular expression, the probability of a match will decrease. The restricted values are effectively removed from the pool of possible matches, reducing the overall chance of a successful match
 
 > Theory: **Using the OR Operator, Negative lookaheads essentially decrease the randomness of generating a valid SSN, in effect, reducing the overall chance of a successful match with regex**
+
     > So, if this theory is correct:
+
         > The rule implemented by the Department of Social Security to exclude:
+
             - values 666, 000, and ones between 900-999 from the first 3 digits (Group 1)
+
             - value 00 from the middle 2 digits (Group 2)
+
             - value 0000 from the final 4 digits (Group 3)
-        > Decreases the randomness of SSN assignment at birth and may increase the likelihood of hacking 
+
+        ... Decreases the randomness of SSN assignment at birth and may increase the likelihood of hacking since the regex excludes digit options to choose from by around 4%!
+
+> Note: This is a theory I arrived at from basic mathematics to calculate probability of combinations. I do not account for external factors, and do not know if this information is fully accurate. 
 
 
 ### Flags
@@ -430,4 +449,49 @@ Using th OR operator, we exclude certain values including:
 
 ## Author
 
-A short section about the author with a link to the author's GitHub profile (replace with your information and a link to your profile)
+I am Kayla Casale, the author of this gist. You can view my projects at: https://github.com/kaylacasale .
+
+As a Molecular and Cellular Biology major, I could not help but think of regular expressions like the process of DNA replication. If you think of Social Security numbers (SSNs) like genes in our DNA, this anaolgy might make sense.
+
+We know that people's genomes differ from each other in all sorts of ways. Those ifferences in your DNA help determine what you look like, and differentiate you from one another. But we also know that DNA between humans are 99.9% identical. While the genetic differences between different groups of human beings are similarly minute, we only have to look around to see an astonishing variety of individual differences in sizes, shapes, and facial features... while our genes generally code for the same basic features such as eyes, legs, hair, etc.
+
+DNA polymerase is the enzyme in our bodies that accurately and efficiently replicates the genome in order to ensure the maintnance of geneic information and its failful transmission through generations.
+
+![Analogy to DNA Replication](assets/DNA-replication.png "Matching Codings Transcription and Translation")
+
+While human systems have almost perfected internal processes like DNA synthesis over tens of thousands of years of evolution, and millions of years as a greater species, we also unfortunetly see mismatching, and it's consequences in cancer and other human mutations. This may be similar to where the regex passes through illegimate SSNs, even within a standard error rate. Human systems have multiple layers of validation, destructuring long sequences into digestable, matchable bits, like groups in the SSN regex validator, that reference similar portions of SSN sequences.
+
+
+**Here, I outline a few similarities between Regular expressions and DNA sequencing that come to mind:**
+
+![Codon Table Analogy to Anchors](assets/codon-sequences.png "Positional Matching")
+
+    - The enzyme (DNA polymerase) that catalyzes DNA synthesis in DNA replication goes through multiple sequences, while only matching and replicating the target DNA sequences
+
+        -- like regex may run through several sequences and only matches one string
+
+![DNA Replication Analogy to Regex](assets/DNA-replication-polymerase.png "DNA polymerase like regex")
+
+    - Can be called from the 5' to 3' direction on either side of the double helix, and within different groups 
+
+        -- Grouping constructs in regex can break down SSN sequences, and both full sequences and groups can be called from various starting and ending points with anchors
+
+![Codons and Primers](assets/start-stop-codons.png "Primers like Anchors")
+
+    - Initiated by primers or start and stop sequences (codons) that are not variable amongst sequences (e.g. start: AUG, stop: UAA, UAG, UGA, etc.)
+
+        -- like Anchors (e.g. `^`, `$`, etc.), a non-unique regex copmonent, whos sequences are not consumed or captured, but used to direct the regex positionally
+
+![Wobble Position](assets/wobble-position.png "Like Diversity in Same Regex")
+
+    - Wobble Position of a codon: refers to the pairing between two nucleotides in RNA molecules that does not follow strict Watson-Crick base pair rules. This phenomenon permits a single tRNA to recognize more than one codon. Therefore, although there are 61 codons for amino acids, the number of tRNA (or enzymes that recognize and match each distinct codon sequence) is far less (around 40), due to wobbling.
+
+        -- OR Operators and Bracket Expressions allow us to use Character Classes to include a range of values for matching and/or exclude values. This is why the same regex can match multiple sequences, since there are several SSN possibilities that can fit one regex sequence.
+
+### Future Goals
+
+In the future, and with more knowledge, I plan on creating a Regex to identify gene sequences. Please let me know if you are interested or have any thoughts on this matter! 
+
+I can be contacted through email at kayla.casale@gmail.com . 
+
+Thank you, I hope you enjoyed this gist on validating Social Security numbers with Regular expressions!
