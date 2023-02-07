@@ -442,9 +442,9 @@ Using th OR operator, we exclude certain values including:
 > Note: This is a theory I arrived at from basic mathematics to calculate probability of combinations. I do not account for external factors, and do not know if this information is fully accurate. 
 
 
-### Flags
+<!-- ### Flags
 
-### Character Escapes
+### Character Escapes -->
 
 
 ## Author
