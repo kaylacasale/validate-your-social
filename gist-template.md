@@ -388,15 +388,34 @@ If we look back to the guidelines that SSN's have to fit, I did not follow the e
 
     >  ^(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$
 ...
+
 4. The second part should have 2 digits and it should be from 01 to 99
+
 5. The third part should have 4 digits and it should be from 0001 to 9999
 
 
 Using th OR operator, we exclude certain values including:
 
-| Values Excluded | Group   | Probablility of Generating that Value |   |
-|:---------------:|:-------:|:-------------------------------------:|:-:|
-| `666`, `000`, `9xx` | $1 | 1 - (1/10 * 1/10) | x = [0-9] |
+| Value(s) Excluded | Group   | Probablility of Generating Excluded Value(s)   | if (x), x = | Probability of Generating all Other Values |   |
+|:---------------:|:-------:|:----------------------------------------------:|:-----------:|:------------------------------------------:|:-:|
+| `666`, `000`, `9xx` | $1 | `[(1/10)^3 - (1/10)^3 - [(1/10) * (1) * (1)]]` = 1/500 = 0.102 | `[0-9]` | 1 - 0.102 = **0.898** | **89.8%** chance of getting SSN without excluded values |
+| `00` | $2 | (1/10 * 1/10) = 1/100 = **.01** | `[0-9]` | 1 - 0.01 = **0.99** | **99%** chance of getting SSN without excluded value |
+| `0000` | $3 | ((1/10)^4) = 9999/10000 = *0.0001* | `[0-9]` | 1 - 0.0001 = 0.9999 | **99.99%** chance of getting SSN without excluded value |
+
+> cumulative chance of fwtting SSN without excluded values: 
+
+    > 0.898 + 0.99 + 0.9999 = 2.8878
+
+    > 3 - 2.8878 = 0.1121
+
+    > 0.1121 / 3 = 0.037366...
+
+        > 3.7367% less likely to get SSN without excluded values (aka: 3.7% less random opportunities in choosing values)
+
+            > By excluding certain values through negative lookaheads in the regular expression, the probability of a match will decrease. The restricted values are effectively removed from the pool of possible matches, reducing the overall chance of a successful match
+
+> Theroy: **Using the OR Operator, Negative lookaheads essentially decrease the randomness of generating a valid SSN, in effect, reducing the overall chance of a successful match with regex**
+
 
 ### Flags
 
