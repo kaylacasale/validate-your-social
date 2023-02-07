@@ -188,11 +188,11 @@ The follow are quantifiers used in the regex pattern for validating a SSN:
 
 
 
-- With Quantifiers, we can also rewrite the bold portion of our more lengthy regular expression below: 
+- [x] With Quantifiers, we can also rewrite the bold portion of our more lengthy regular expression below: 
 
-    ☞ ^(?!(000|666|9))\d{3}-(?!00)\d{2}-**(?!0000)**\d{4}$ 
+    ☞ [ ] ^(?!(000|666|9))\d{3}-(?!00)\d{2}-**(?!0000)**\d{4}$ 
 
-    👉 ^(?!(000|666|9))\d{3}-(?!00)\d{2}-**(?!0{4})**\d{4}$ 
+    👉 [x] ^(?!(000|666|9))\d{3}-(?!00)\d{2}-**(?!0{4})**\d{4}$ 
 
 
 | Changed                   | Replaced With                 | 
@@ -208,13 +208,21 @@ The follow are quantifiers used in the regex pattern for validating a SSN:
 
 ### Grouping Constructs
 
-Grouping constructs in regular expressions are used to group parts of the pattern rogether and apply quantifiers or other operations to the entire group.
+    > Delineate the subexpressions of a regular expression and capture the substrings of an input string
+        > THINK: Recognizable groups or patterns to check
 
-     `^\d{3}-\d{2}-\d{4}$`
+Grouping constructs in regular expressions are used to group parts of a pattern together and apply quantifiers or other operations to the entire group.
 
-**There are no grouping constructs used in the standard SSN validation pattern shown above, as the pattern only consists of individual charactrers, character classes, quantifiers, and anchors. This is because the pattern is used to match the entire string, so it is not neccessary to group portions of the pattern together.**
+     ^\d{3}-\d{2}-\d{4}$
 
-Let's say you want to match the term `SSN:` that usually precedes the 9-digit number, but you do not want to capture these characters. | 
+**There are no grouping constructs used in the basic SSN validation pattern shown above ⬆️, as the pattern only consists of individual charactrers, character classes, quantifiers, and anchors. This is because the pattern is used to match the entire string, so it is not neccessary to group portions of the pattern together.**
+
+    ^(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$
+
+**However, there are grouping constructs in the longer SSN regex shown above ⬆️. So let's discuss this!**
+
+
+<!-- Let's say you want to match the term `SSN:` that usually precedes the 9-digit number, but you do not want to capture these characters. | 
 - BUT how can we apply Grouping Constructs to SSN regex validation? 
     - Let's think of a real-life example!
 
@@ -224,32 +232,30 @@ Regular expression search:
 - Assigns full match to `Group 0`
 - () means that that part of the full match should be captured separatetly as a different group
     - Groups numbered left to right, Group 0 being the full match, Group 1 being the captured group farthest to the left, Group 2 being the captured group located to the right of Group 1, etc.
+| `(?:)`         | Non-capturing Group | Similar to capturing groups, but do not capture the text matched by the group. This is useful when applying operations to a group of characters but do not need to capture the matched text. | `(?:abc){3}` | `abcabcabc` (no groups) | | | -->
+ <!-- `(\d{3}-\d{2}-\d{4}\s)+` | Let's say you had several SSN numbers separated single whitespaces. Instead of the `^` and `$` anchors defining the acceptable start and end matches for one sequence, this may be able to separate and validate several SSN numbers placed together.  -->
+
+In general, the main grouping constructs used in this regex for validating SSNs are:
 
 
-In general, the main grouping constructs used in regex are:
 
-
-
-| Symbol         | Name               | Use                              | Pattern | Matches | Potential regex using Grouping Constructs |  |
+| Symbol         | Name               | Use                              | Pattern | Matches | Example Grouping Constructs for Validating SSN |  |
 |---------------:|:------------------:|:--------------------------------:|:-------:|:-------:|:------------------------:|:---------:|
-| `()`           | Capturing Group    | Used to group parts of the pattern together and capture the matched text. The captured sequence can be accessed through group references with a numbered backreference, such as `/1`, `/2`, et., Within the group, you can apply quantifiers,alternation, and other operations to the entire group. | `(\w+\s)+` | Matches one or more word characters followed by a whitespace, repeated one or more times | `(\d{3}-\d{2}-\d{4}\s)+` | Let's say you had several SSN numbers separated single whitespaces. Instead of the `^` and `$` anchors defining the acceptable start and end matches for one sequence, this may be able to separate and validate several SSN numbers placed together. |
-| `(?:)`         | Non-capturing Group | Similar to capturing groups, but do not capture the text matched by the group. This is useful when applying operations to a group of characters but do not need to capture the matched text. | `(?:abc){3}` | `abcabcabc` (no groups) | | |
-| `(?!)`         | Negative Lookahead | Will only match if the capturing group does not match | `match(?!element)` or `z(?!a)` | Element cannot follow match in order to be a successful match (exludes values ahead in the regex); Matches the first "z" but not the "z" before the "a" | `(?!0{4})` | Regex will not match the SSN ending in a group of 4 zeros as the last 4 digits | 
-| `\\`           | Back
+| `()`           | Capturing Group    | Used to group parts of the pattern together and capture the matched text. The captured sequence can be accessed through group references with a numbered backreference, such as `/1`, `/2`, et., Within the group, you can apply quantifiers,alternation, and other operations to the entire group. | `(\w+\s)+` | Matches one or more word characters followed by a whitespace, repeated one or more times | (1) `(?!666⏐000⏐9\d{2})`, (2) `(?!00)`, (3) `(?!0{4})` | 3 groups captured by the SSN regex shown above; returns true if the string matches and does not contain excluded values | 
+| `(?!)`         | Negative Lookahead | Will only match if the capturing group does not match | (i) `match(?!element)` or (ii) `z(?!a)` |(i) Element cannot follow match in order to be a successful match (exludes values ahead in the regex); (ii) Matches the first "z" but not the "z" before the "a" | `(?!0{4})` | Regex will not match the SSN ending in a group of 4 zeros as the last 4 digits | 
 
 
-- Along with Quantifiers, we can use Grouping Constructs to rewrite the bold portion of our more lengthy regular expression below:
 
-    ☞ ^(?!(000|666|**9)**)\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$ 
+- [x] Along with Quantifiers, we can use Grouping Constructs to rewrite the bold portion of our more lengthy regular expression below:
 
-    👉 ^(?!666|000|**9\d{2}**)\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$
+    ☞ [ ] ^**(?!(000|666|9))\d{3}**-(?!00)\d{2}-(?!0{4})\d{4}$ 
 
-
+    👉 [x] ^**(?!666|000|9\d{2})\d{3}**-(?!00)\d{2}-(?!0{4})\d{4}$
 
 
 | Changed                   | Replaced With                 |
 |:-------------------------:|:-----------------------------:|
-| `9)`                      | `9\d{2})`                     |
+| `(?!(000⎸666⎸9))\d{3}`     | `(?!666⎸000⎸9\d{2})\d{3}`                     |
 
 - Parentheses Contents in the Match
     - Each sub-pattern inside a pair of parenthesis will be captured as a group
@@ -288,6 +294,20 @@ In general, the main grouping constructs used in regex are:
 | `(?!0{4})`                 | Group 3 | 4 digits to look ahead for that should be any value from 0001-9999; so any SSN with a 4-digit sequence in Group 3 that is `0000` is not valid |
 
 ### Bracket Expressions
+
+    > A list of characters enclosed by `[]` (It matches any single character in that list)
+        > If the first charater of the list is the caret `^`, then it matches any character NOT in the list
+            > THINK: choices or options
+
+Within a bracket expression, a range expresison consists of two characters separated by a hyphen. It matches any single character that sorts between the two characters, inclusive. 
+
+| Syntax                    | Represents                        | Alternative or Equivalent                 |
+|:-------------------------:|:---------------------------------:|:-----------------------------------------:|
+|⭐️  `[:punct:]`               | Punctuation characters            | `! # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ʼ { | } ~` |
+| `[:alnum:]`               | Alphanumeric characters           | `[0-9A-Za-z]`                             |
+| `[:alpha:]`               | Alphabet characters               | `[A-Za-z]`                                |
+| `[:blank:]`               | Blank characters                  | `space` and `tab`                         |
+| `[:digit:]`               | Digits                            | `0 1 2 3 4 5 6 7 8 9`                     |
 
 ### Character Classes
 | Symbol         | Use                              | Pattern | Matches |
