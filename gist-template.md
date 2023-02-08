@@ -453,13 +453,15 @@ I am Kayla Casale, the author of this gist. You can view my projects at: https:/
 
 As a Molecular and Cellular Biology major, I could not help but think of regular expressions like the process of DNA replication. If you think of Social Security numbers (SSNs) like genes in our DNA, this anaolgy might make sense.
 
-We know that people's genomes differ from each other in all sorts of ways. Those ifferences in your DNA help determine what you look like, and differentiate you from one another. But we also know that DNA between humans are 99.9% identical. While the genetic differences between different groups of human beings are similarly minute, we only have to look around to see an astonishing variety of individual differences in sizes, shapes, and facial features... while our genes generally code for the same basic features such as eyes, legs, hair, etc.
+We know that people's genomes differ from each other in all sorts of ways. Those differences in your DNA help determine what you look like, and differentiate you from one another. But we also know that DNA between humans are 99.9% identical. While the genetic differences between different groups of human beings are similarly minute, we only have to look around to see an astonishing variety of individual differences in sizes, shapes, and facial features... while our genes generally code for the same basic features such as eyes, legs, hair, etc.
 
-DNA polymerase is the enzyme in our bodies that accurately and efficiently replicates the genome in order to ensure the maintnance of geneic information and its failful transmission through generations.
+DNA polymerase is the enzyme in our bodies that accurately and efficiently replicates the genome in order to ensure the maintnance of genetic information and its failful transmission through generations.
 
 ![Analogy to DNA Replication](assets/DNA-replication.png "Matching Codings Transcription and Translation")
 
 While human systems have almost perfected internal processes like DNA synthesis over tens of thousands of years of evolution, and millions of years as a greater species, we also unfortunetly see mismatching, and it's consequences in cancer and other human mutations. This may be similar to where the regex passes through illegimate SSNs, even within a standard error rate. Human systems have multiple layers of validation, destructuring long sequences into digestable, matchable bits, like groups in the SSN regex validator, that reference similar portions of SSN sequences.
+
+As coders...maybe we can learn something from our own biological systems and make our regular expressions more efficient and accurate matching systems! 🤔
 
 
 **Here, I outline a few similarities between Regular expressions and DNA sequencing that come to mind:**
